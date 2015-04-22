@@ -7,7 +7,7 @@ import time
 
 
 class CustomLogger(object):
-    """Custome Logger"""
+    """Custom Logger"""
 
     def __init__(self, logfilename):
         self.logfilename = logfilename
@@ -21,18 +21,21 @@ class CustomLogger(object):
 
     def flush(self):
         """flush function"""
-        handled = []
         try:
+            handled = []
             fhandler = open(self.logfilename, 'a')
+        except IOError:
+            raise IOError
+        try:
             for index, entry in enumerate(self.msgs):
                 fhandler.write(str(entry) + '\n')
                 handled.append(index)
-            try:
-                for index in handled[::-1]:
-                    del self.msgs[index]
-            except IOError:
-                raise IOError
-        except IOError as log:
+        except IOError:
+            raise IOError
+        try:
+            for index in handled[::-1]:
+                del self.msgs[index]
+        except IOError:
             raise IOError
         finally:
             fhandler.close()
